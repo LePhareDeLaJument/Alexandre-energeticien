@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Énergéticien - Harmonie & Énergie</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 
@@ -82,6 +83,28 @@ section p {
     margin-bottom: 20px;
 }
 
+/* SOCIAL ICONS */
+.social-links {
+    margin: 40px 0;
+}
+
+.social-links a {
+    color: white;
+    font-size: 1.8rem;
+    margin: 0 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+/* Couleurs au survol */
+.social-links a:hover {
+    transform: translateY(-5px);
+}
+.fa-facebook:hover { color: #1877F2; }
+.fa-instagram:hover { color: #E4405F; }
+.fa-youtube:hover { color: #FF0000; }
+
 /* BUTTON */
 .btn {
     display: inline-block;
@@ -136,7 +159,6 @@ footer {
 
 <body>
 
-<!-- VIDEO BACKGROUND -->
 <video autoplay muted loop id="bg-video">
     <source src="cascade.mp4" type="video/mp4">
 </video>
@@ -165,6 +187,12 @@ footer {
         💫 Harmonisation énergétique<br>
         🌸 Reconnexion à soi
     </p>
+
+    <div class="social-links">
+        <a href="https://facebook.com/votrepage" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://instagram.com/votrecompte" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/votrechaine" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+    </div>
 </section>
 
 <footer>
