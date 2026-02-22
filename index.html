@@ -8,7 +8,7 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400&display=swap" rel="stylesheet">
 
-<!-- Font Awesome -->
+<!-- Font Awesome (Facebook / YouTube / Instagram) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -99,25 +99,41 @@ section h2 {
 
 /* SOCIAL ICONS */
 .social {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 
 .social a {
-    color: white;
-    font-size: 28px;
     margin: 0 15px;
+    display: inline-block;
     transition: 0.3s ease;
 }
 
-.social a:hover {
-    transform: scale(1.3);
+.social i {
+    font-size: 28px;
+    color: white;
 }
 
-/* Couleurs officielles au hover */
+.social a:hover {
+    transform: scale(1.25);
+}
+
+/* Hover couleurs officielles */
 .fa-facebook-f:hover { color: #1877F2; }
 .fa-youtube:hover { color: #FF0000; }
 .fa-instagram:hover { color: #E4405F; }
-.fa-x-twitter:hover { color: #ffffff; }
+
+/* Logo X SVG */
+.x-icon img {
+    width: 26px;
+    height: 26px;
+    filter: invert(1); /* Rend blanc si SVG noir */
+    transition: 0.3s ease;
+}
+
+.x-icon img:hover {
+    transform: scale(1.25);
+    filter: invert(1) drop-shadow(0 0 8px rgba(255,255,255,0.9));
+}
 
 /* FOOTER */
 footer {
@@ -196,6 +212,7 @@ footer {
 </section>
 
 <div class="social">
+
     <a href="https://facebook.com/votrepage" target="_blank">
         <i class="fab fa-facebook-f"></i>
     </a>
@@ -208,9 +225,11 @@ footer {
         <i class="fab fa-instagram"></i>
     </a>
 
-    <a href="https://x.com/votrepage" target="_blank">
-        <i class="fab fa-x-twitter"></i>
+    <!-- Logo officiel X -->
+    <a href="https://x.com/votrepage" target="_blank" class="x-icon">
+        <img src="x-logo.svg" alt="X">
     </a>
+
 </div>
 
 <footer>
