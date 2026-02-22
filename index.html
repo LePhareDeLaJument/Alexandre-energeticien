@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Énergéticien - Harmonie & Énergie</title>
+<title>Harmonie & Énergie</title>
 
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Raleway:wght@300;400&display=swap" rel="stylesheet">
 
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -16,6 +18,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: 'Raleway', sans-serif;
+    color: white;
+    text-align: center;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* VIDEO BACKGROUND */
@@ -34,40 +45,29 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    background: rgba(20, 40, 30, 0.55);
+    background: rgba(20, 40, 30, 0.6);
     z-index: -1;
-}
-
-/* BODY */
-body {
-    font-family: 'Raleway', sans-serif;
-    color: white;
-    text-align: center;
-    line-height: 1.6;
 }
 
 /* HEADER */
 header {
-    padding: 100px 20px 60px;
-    animation: fadeIn 2s ease forwards;
+    padding: 90px 20px 60px;
+    animation: fadeUp 1.5s ease forwards;
 }
 
 header h1 {
     font-family: 'Playfair Display', serif;
     font-size: 3rem;
-    font-weight: 600;
-    letter-spacing: 1px;
+    margin-bottom: 20px;
 }
 
 header p {
-    margin-top: 20px;
     font-size: 1.2rem;
-    font-weight: 300;
 }
 
 /* SECTIONS */
 section {
-    padding: 80px 20px;
+    padding: 70px 20px;
     max-width: 900px;
     margin: auto;
     animation: fadeUp 1.5s ease forwards;
@@ -79,51 +79,45 @@ section h2 {
     font-size: 2rem;
 }
 
-section p {
-    margin-bottom: 20px;
-}
-
-/* SOCIAL ICONS */
-.social-links {
-    margin: 40px 0;
-}
-
-.social-links a {
-    color: white;
-    font-size: 1.8rem;
-    margin: 0 15px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-/* Couleurs au survol */
-.social-links a:hover {
-    transform: translateY(-5px);
-}
-.fa-facebook:hover { color: #1877F2; }
-.fa-instagram:hover { color: #E4405F; }
-.fa-youtube:hover { color: #FF0000; }
-.fa-x:hover { color: #110000; }
-
-
 /* BUTTON */
 .btn {
     display: inline-block;
     padding: 15px 35px;
-    margin-top: 20px;
+    margin-top: 25px;
     background: linear-gradient(135deg, #9be7c4, #4bbf9f);
     color: #0f2b24;
     font-weight: 600;
-    border-radius: 30px;
+    border-radius: 40px;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .btn:hover {
     transform: scale(1.05);
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
+
+/* SOCIAL ICONS */
+.social {
+    margin-top: 40px;
+}
+
+.social a {
+    color: white;
+    font-size: 28px;
+    margin: 0 15px;
+    transition: 0.3s ease;
+}
+
+.social a:hover {
+    transform: scale(1.3);
+}
+
+/* Couleurs officielles au hover */
+.fa-facebook-f:hover { color: #1877F2; }
+.fa-youtube:hover { color: #FF0000; }
+.fa-instagram:hover { color: #E4405F; }
+.fa-x-twitter:hover { color: #ffffff; }
 
 /* FOOTER */
 footer {
@@ -132,12 +126,7 @@ footer {
     opacity: 0.8;
 }
 
-/* ANIMATIONS */
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
+/* ANIMATION */
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -151,8 +140,22 @@ footer {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+
     header h1 {
         font-size: 2rem;
+    }
+
+    #bg-video {
+        display: none;
+    }
+
+    body {
+        background: url("cascade-mobile.webp") center/cover no-repeat fixed;
+    }
+
+    .btn {
+        width: 80%;
+        max-width: 280px;
     }
 }
 
@@ -161,7 +164,8 @@ footer {
 
 <body>
 
-<video autoplay muted loop id="bg-video">
+<!-- VIDEO -->
+<video autoplay muted loop playsinline id="bg-video">
     <source src="cascade.mp4" type="video/mp4">
 </video>
 
@@ -189,19 +193,29 @@ footer {
         💫 Harmonisation énergétique<br>
         🌸 Reconnexion à soi
     </p>
-
-    <div class="social-links">
-        <a href="https://facebook.com/votrepage" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
-        <a href="https://instagram.com/votrecompte" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://youtube.com/votrechaine" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="https://x.com/votrepage" target="_blank" title="X"><i class="fab fa-x"></i></a>
-    </div>
 </section>
+
+<div class="social">
+    <a href="https://facebook.com/votrepage" target="_blank">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+
+    <a href="https://youtube.com/votrechaine" target="_blank">
+        <i class="fab fa-youtube"></i>
+    </a>
+
+    <a href="https://instagram.com/votrepage" target="_blank">
+        <i class="fab fa-instagram"></i>
+    </a>
+
+    <a href="https://x.com/votrepage" target="_blank">
+        <i class="fab fa-x-twitter"></i>
+    </a>
+</div>
 
 <footer>
     © 2026 - Harmonie & Énergie | Tous droits réservés
 </footer>
 
 </body>
-
 </html>
