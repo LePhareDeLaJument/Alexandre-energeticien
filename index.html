@@ -3,156 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snack 43 - Commande Express</title>
+    <title>Snack 43 - Panier</title>
     <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root { --primary: #ff4757; --secondary: #2f3542; --bg: #f1f2f6; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 110px; color: var(--secondary); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 110px; }
         
-        header { background: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        header h1 { margin: 0; font-size: 1.2rem; }
-        .status { font-size: 0.7rem; color: #2ed573; font-weight: bold; }
-
-        .categories { display: flex; overflow-x: auto; padding: 10px; gap: 8px; background: var(--bg); position: sticky; top: 60px; z-index: 90; }
-        .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { background: var(--white); border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .cat-btn.active { background: var(--primary); color: var(--white); }
-
+        header { background: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
         .product-grid { padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .product-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; }
+        .product-card { background: var(--white); border-radius: 15px; padding: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .product-img { font-size: 2.5rem; }
         
-        .product-img { width: 100%; height: 100px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .product-info { padding: 10px; text-align: center; }
-        .product-name { font-weight: bold; font-size: 0.85rem; height: 32px; overflow: hidden; margin-bottom: 5px; }
-        .product-price { color: var(--primary); font-weight: 800; margin-bottom: 10px; display: block; }
-
-        .counter-box { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: auto; padding-bottom: 10px; }
-        .btn-qty { background: var(--secondary); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
-        .btn-qty.minus { background: #dcdde1; color: var(--secondary); }
-        .qty-val { font-weight: bold; font-size: 1rem; min-width: 20px; }
-
-        .cart-bar { position: fixed; bottom: 15px; left: 5%; width: 90%; background: var(--secondary); color: white; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 1000; box-sizing: border-box; }
-        .checkout-btn { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .counter-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        .btn-qty { background: var(--secondary); color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
+        
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .checkout-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>🍕 Snack 43 - Commande Express</h1>
-    <div class="status">● Livraison directe au gîte</div>
-</header>
-
-<div class="categories" id="cat-nav">
-    <button class="cat-btn active">Tout</button>
-    <button class="cat-btn">Plats</button>
-    <button class="cat-btn">Boissons</button>
-    <button class="cat-btn">Snacks</button>
-    <button class="cat-btn">Eau</button>
-</div>
+<header><h1>🍕 Mon Snack</h1></header>
 
 <div class="product-grid" id="grid"></div>
 
 <div class="cart-bar">
-    <div>
-        <div style="font-size: 0.8rem; opacity: 0.8;"><span id="total-qty">0</span> produits</div>
-        <div style="font-weight: bold; font-size: 1.2rem;"><span id="total-price">0.00</span>€</div>
-    </div>
+    <div>Total: <span id="total-price">0.00</span>€</div>
     <button class="checkout-btn" onclick="sendOrder()">Commander</button>
 </div>
 
 <script>
+    // 1. TA CLÉ PUBLIQUE (Vérifie bien qu'elle commence par pk_test)
     const stripe = Stripe('pk_test_51TFEt92L2bSCgLcUJSmtd6dpcV2cswEstTceCdpQDhz9OgEBhVULq1uwmfxig7uC87kscsHUUtTdpy5qMdK63c9o00nlEB7erf');
 
     const products = [
-        { id: 1, name: "Salade Sodebo Poulet", price: 6.00, cat: "Plats", icon: "🥗" },
-        { id: 2, name: "Sandwich Poulet", price: 4.50, cat: "Plats", icon: "🥪" },
-        { id: 3, name: "Pasta Box Carbo", price: 5.50, cat: "Plats", icon: "🍝" },
-        { id: 4, name: "Coca-Cola 33cl", price: 2.50, cat: "Boissons", icon: "🥤", stripe_id: "price_1THsd52L2bSCgLcUoW1C6UM3" },
-        { id: 5, name: "Ice Tea Pêche", price: 2.50, cat: "Boissons", icon: "🍹" },
-        { id: 6, name: "Perrier 33cl", price: 2.00, cat: "Eau", icon: "💧" },
-        { id: 7, name: "San Pellegrino 50cl", price: 2.50, cat: "Eau", icon: "🔵" },
-        { id: 8, name: "Kinder Bueno", price: 1.80, cat: "Snacks", icon: "🍫" },
-        { id: 9, name: "Pringles Original", price: 3.50, cat: "Snacks", icon: "🍟" },
-        { id: 10, name: "Madeleine St Michel", price: 1.00, cat: "Snacks", icon: "🧁" }
+        { id: 1, name: "Coca-Cola", price: 2.50, icon: "🥤", stripe_id: "price_1THsd52L2bSCgLcUoW1C6UM3" },
+        { id: 2, name: "Kinder Bueno", price: 1.80, icon: "🍫", stripe_id: "ID_STRIPE_DU_KINDER" } 
     ];
 
-    let cartData = {}; 
+    let cart = {};
 
-    function renderProducts(category = "Tout") {
+    function render() {
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
-        const filtered = (category === "Tout") ? products : products.filter(p => p.cat === category);
-
-        filtered.forEach(p => {
-            const qty = cartData[p.id] || 0;
-            const card = document.createElement('div');
-            card.className = "product-card";
-            card.innerHTML = `
-                <div class="product-img">${p.icon}</div>
-                <div class="product-info">
-                    <div class="product-name">${p.name}</div>
-                    <span class="product-price">${p.price.toFixed(2)}€</span>
-                </div>
-                <div class="counter-box">
-                    <button class="btn-qty minus" onclick="updateQty(${p.id}, -1)">-</button>
-                    <span class="qty-val" id="qty-${p.id}">${qty}</span>
-                    <button class="btn-qty" onclick="updateQty(${p.id}, 1)">+</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === category));
-    }
-
-    function updateQty(id, change) {
-        if (!cartData[id]) cartData[id] = 0;
-        cartData[id] += change;
-        if (cartData[id] < 0) cartData[id] = 0;
-        const qtyLabel = document.getElementById(`qty-${id}`);
-        if (qtyLabel) qtyLabel.innerText = cartData[id];
-        calculateTotal();
-    }
-
-    function calculateTotal() {
-        let total = 0;
-        let count = 0;
         products.forEach(p => {
-            const q = cartData[p.id] || 0;
-            total += q * p.price;
-            count += q;
+            const q = cart[p.id] || 0;
+            grid.innerHTML += `
+                <div class="product-card">
+                    <div class="product-img">${p.icon}</div>
+                    <div style="font-weight:bold">${p.name}</div>
+                    <div>${p.price.toFixed(2)}€</div>
+                    <div class="counter-box">
+                        <button class="btn-qty" onclick="update(${p.id}, -1)">-</button>
+                        <span>${q}</span>
+                        <button class="btn-qty" onclick="update(${p.id}, 1)">+</button>
+                    </div>
+                </div>`;
         });
-        document.getElementById('total-price').innerText = total.toFixed(2);
-        document.getElementById('total-qty').innerText = count;
     }
 
-    document.getElementById('cat-nav').addEventListener('click', (e) => {
-        if(e.target.classList.contains('cat-btn')) renderProducts(e.target.innerText);
-    });
+    function update(id, change) {
+        cart[id] = (cart[id] || 0) + change;
+        if (cart[id] < 0) cart[id] = 0;
+        
+        let total = 0;
+        products.forEach(p => total += (cart[p.id] || 0) * p.price);
+        document.getElementById('total-price').innerText = total.toFixed(2);
+        render();
+    }
 
     function sendOrder() {
-        let lineItems = [];
+        let items = [];
         products.forEach(p => {
-            if (cartData[p.id] > 0 && p.stripe_id) {
-                lineItems.push({ price: p.stripe_id, quantity: cartData[p.id] });
+            if (cart[p.id] > 0 && p.stripe_id.startsWith('price_')) {
+                items.push({ price: p.stripe_id, quantity: cart[p.id] });
             }
         });
 
-        if (lineItems.length === 0) return alert("Veuillez ajouter un Coca-Cola !");
+        if (items.length === 0) return alert("Panier vide ou produit non configuré !");
 
+        // Calcul du lien automatique pour GitHub Pages
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const baseUrl = window.location.origin + path;
 
         stripe.redirectToCheckout({
-            lineItems: lineItems,
+            lineItems: items,
             mode: 'payment',
             successUrl: baseUrl + 'success.html',
             cancelUrl: window.location.href,
-        }).then(function (result) {
-            if (result.error) alert(result.error.message);
         });
     }
 
-    window.onload = () => renderProducts();
+    render();
 </script>
 </body>
 </html>
