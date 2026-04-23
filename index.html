@@ -61,7 +61,6 @@
 </div>
 
 <script>
-    // Initialisation de Stripe avec ta clé publique
     const stripe = Stripe('pk_test_51TFEt92L2bSCgLcUJSmtd6dpcV2cswEstTceCdpQDhz9OgEBhVULq1uwmfxig7uC87kscsHUUtTdpy5qMdK63c9o00nlEB7erf');
 
     const products = [
@@ -102,7 +101,6 @@
             `;
             grid.appendChild(card);
         });
-
         document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === category));
     }
 
@@ -110,7 +108,6 @@
         if (!cartData[id]) cartData[id] = 0;
         cartData[id] += change;
         if (cartData[id] < 0) cartData[id] = 0;
-
         const qtyLabel = document.getElementById(`qty-${id}`);
         if (qtyLabel) qtyLabel.innerText = cartData[id];
         calculateTotal();
@@ -134,25 +131,22 @@
 
     function sendOrder() {
         let lineItems = [];
-        
         products.forEach(p => {
             if (cartData[p.id] > 0 && p.stripe_id) {
-                lineItems.push({
-                    price: p.stripe_id,
-                    quantity: cartData[p.id]
-                });
+                lineItems.push({ price: p.stripe_id, quantity: cartData[p.id] });
             }
         });
 
-        if (lineItems.length === 0) {
-            return alert("Veuillez ajouter un Coca-Cola pour tester le paiement (seul produit configuré pour l'instant) !");
-        }
-        
+        if (lineItems.length === 0) return alert("Veuillez ajouter un Coca-Cola !");
+
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const baseUrl = window.location.origin + path;
+
         stripe.redirectToCheckout({
             lineItems: lineItems,
             mode: 'payment',
-            successUrl: window.location.origin + '/success.html',
-            cancelUrl: window.location.origin + '/index.html',
+            successUrl: baseUrl + 'success.html',
+            cancelUrl: window.location.href,
         }).then(function (result) {
             if (result.error) alert(result.error.message);
         });
@@ -160,6 +154,5 @@
 
     window.onload = () => renderProducts();
 </script>
-
 </body>
 </html>
