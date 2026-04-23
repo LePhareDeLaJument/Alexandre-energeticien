@@ -4,42 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snack 43 - Panier</title>
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root { --primary: #ff4757; --secondary: #2f3542; --bg: #f1f2f6; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 110px; }
-        
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; }
         header { background: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
         .product-grid { padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .product-card { background: var(--white); border-radius: 15px; padding: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .product-card { background: var(--white); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .product-img { font-size: 2.5rem; }
-        
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        .btn-qty { background: var(--secondary); color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
-        
-        .cart-bar { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-        .checkout-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-qty { background: var(--secondary); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+        .cart-bar { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; z-index: 1000; }
+        .checkout-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
     </style>
 </head>
 <body>
 
-<header><h1>🍕 Mon Snack</h1></header>
+<header><h1>🍕 Snack 43 - Panier</h1></header>
 
 <div class="product-grid" id="grid"></div>
 
 <div class="cart-bar">
-    <div>Total: <span id="total-price">0.00</span>€</div>
-    <button class="checkout-btn" onclick="sendOrder()">Commander</button>
+    <div>Total : <span id="total-price">0.00</span>€</div>
+    <a id="pay-link" href="#" class="checkout-btn" onclick="checkCart(event)">Commander</a>
 </div>
 
 <script>
-    // 1. TA CLÉ PUBLIQUE (Vérifie bien qu'elle commence par pk_test)
-    const stripe = Stripe('pk_test_51TFEt92L2bSCgLcUJSmtd6dpcV2cswEstTceCdpQDhz9OgEBhVULq1uwmfxig7uC87kscsHUUtTdpy5qMdK63c9o00nlEB7erf');
-
+    // Liste des produits avec leurs LIENS DE PAIEMENT directs (buy.stripe.com)
     const products = [
-        { id: 1, name: "Coca-Cola", price: 2.50, icon: "🥤", stripe_id: "price_1THsd52L2bSCgLcUoW1C6UM3" },
-        { id: 2, name: "Kinder Bueno", price: 1.80, icon: "🍫", stripe_id: "ID_STRIPE_DU_KINDER" } 
+        { 
+            id: 4, 
+            name: "Coca-Cola", 
+            price: 2.50, 
+            icon: "🥤", 
+            link: "https://buy.stripe.com/test_8x27sEg9V8WS2r80Lmcwg01" 
+        }
+        // Ajoute les autres produits ici avec leurs liens buy.stripe.com respectifs
     ];
 
     let cart = {};
@@ -53,10 +52,10 @@
                 <div class="product-card">
                     <div class="product-img">${p.icon}</div>
                     <div style="font-weight:bold">${p.name}</div>
-                    <div>${p.price.toFixed(2)}€</div>
+                    <div style="color:var(--primary)">${p.price.toFixed(2)}€</div>
                     <div class="counter-box">
                         <button class="btn-qty" onclick="update(${p.id}, -1)">-</button>
-                        <span>${q}</span>
+                        <span style="font-weight:bold; min-width:20px">${q}</span>
                         <button class="btn-qty" onclick="update(${p.id}, 1)">+</button>
                     </div>
                 </div>`;
@@ -68,31 +67,27 @@
         if (cart[id] < 0) cart[id] = 0;
         
         let total = 0;
-        products.forEach(p => total += (cart[p.id] || 0) * p.price);
-        document.getElementById('total-price').innerText = total.toFixed(2);
-        render();
-    }
+        let selectedLink = "#";
 
-    function sendOrder() {
-        let items = [];
         products.forEach(p => {
-            if (cart[p.id] > 0 && p.stripe_id.startsWith('price_')) {
-                items.push({ price: p.stripe_id, quantity: cart[p.id] });
+            if (cart[p.id] > 0) {
+                total += cart[p.id] * p.price;
+                // Pour l'instant, on prend le lien du dernier produit ajouté
+                selectedLink = p.link; 
             }
         });
 
-        if (items.length === 0) return alert("Panier vide ou produit non configuré !");
+        document.getElementById('total-price').innerText = total.toFixed(2);
+        document.getElementById('pay-link').href = selectedLink;
+        render();
+    }
 
-        // Calcul du lien automatique pour GitHub Pages
-        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const baseUrl = window.location.origin + path;
-
-        stripe.redirectToCheckout({
-            lineItems: items,
-            mode: 'payment',
-            successUrl: baseUrl + 'success.html',
-            cancelUrl: window.location.href,
-        });
+    function checkCart(e) {
+        const total = parseFloat(document.getElementById('total-price').innerText);
+        if (total === 0) {
+            e.preventDefault();
+            alert("Ton panier est vide !");
+        }
     }
 
     render();
