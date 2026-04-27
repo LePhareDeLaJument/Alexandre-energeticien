@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+button { padding:12px; border:none; border-radius:8px; cursor:pointer; }
+ul { padding-left: 20px; }
